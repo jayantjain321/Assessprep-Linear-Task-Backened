@@ -5,7 +5,7 @@ module Api
 
       # Before updating or deleting a task, find the task and ensure the current user owns the task
       before_action :find_task, only: [:update, :destroy, :task_comments]
-      before_action :authorize_task_owner!, only: [:update, :destroy]
+      before_action :authorize_task_owner!, only: [:destroy]
 
       # POST /tasks
       def create
@@ -55,7 +55,7 @@ module Api
         tasks = Task.order(created_at: :desc).page(params[:page]).per(10) # Order tasks by creation time in descending order
         render json: {tasks: tasks}, status: :ok
       end
-      
+
 
       # GET /tasks/:id/comments
       def task_comments

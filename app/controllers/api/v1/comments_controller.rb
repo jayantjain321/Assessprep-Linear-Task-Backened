@@ -30,12 +30,20 @@ module Api
 
       # PUT /comments/:id  Updates an existing comment
       def update
-        authorize! :update, @comment  # CanCanCan authorization (will throw an AccessDenied exception if unauthorized)
-        @comment.update!(comment_params)  #Update the comment
+        authorize! :update, @comment  # CanCanCan authorization
+      
+        # Check if new images are provided in the update
+        if comment_params[:images].present?
+          new_images = comment_params[:images] # If images exist, either initialize or update the images array
+          @comment.images = @comment.images.presence || [] # If the comment previously had no images (nil or empty array), just add the new ones
+          @comment.images += new_images    # Append new images to existing ones (if needed) or replace completely
+        end
+    
+        @comment.update!(text: comment_params[:text], images: @comment.images)  # Update text and other parameters as usual
         LogActionService.log_action(@comment.id, current_user.id, :update, 'Comment')
         render json: { message: 'Comment updated successfully', comment: @comment }, status: :ok
       end
-
+      
       # DELETE /comments/:id Deletes a comment
       def destroy
         authorize! :destroy, @comment   # CanCanCan authorization (will throw an AccessDenied exception if unauthorized)
