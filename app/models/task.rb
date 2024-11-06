@@ -1,8 +1,6 @@
 class Task < ApplicationRecord
   include Loggable
 
-  acts_as_paranoid  # Allows for soft deletion of tasks
-
   #Associations
   belongs_to :user  #Each task belongs to a user many-to-one Relation
   has_many :comments, dependent: :destroy #If a task deleted, commeent will be deleted too one-to-many relation
@@ -15,5 +13,23 @@ class Task < ApplicationRecord
   validates :due_date, presence: true, comparison: { greater_than: :assign_date } # Ensure due date is present
   validates :status, presence: true, inclusion: { in: %w[Todo Done InProgress InDevReview] } # Valid status values
   validates :priority, presence: true, inclusion: { in: %w[Urgent High Low] } # Valid priority values
+
+  # Exclude soft-deleted tasks by default
+  default_scope { where(deleted_at: nil) }
+
+  # Soft delete method - sets the deleted_at timestamp to mark as deleted
+  def mark_as_deleted
+    update(deleted_at: Time.current)
+  end
+
+  # Check if the record is soft-deleted
+  def soft_deleted?
+    deleted_at.present?
+  end
+
+  # Override destroy method to perform soft delete instead of hard delete
+  def destroy
+    mark_as_deleted
+  end
 end
 

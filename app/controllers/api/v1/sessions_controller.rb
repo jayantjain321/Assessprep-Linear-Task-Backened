@@ -13,8 +13,8 @@ module Api
         if user && user.authenticate(params[:password])  #Verifying wheather the user and password is matching or not
 
           # Generate access and refresh tokens with expiration times
-          access_token = encode_token({ user_id: user.id, exp: 12.hours.from_now.to_i })
-          refresh_token = encode_token({ user_id: user.id, exp: 12.hours.from_now.to_i })
+          access_token = encode_token({ user_id: user.id, exp: 24.hours.from_now.to_i })
+          refresh_token = encode_token({ user_id: user.id, exp: 48.hours.from_now.to_i })
 
           # Return tokens and user information in the response
           render json: { 
@@ -43,7 +43,7 @@ module Api
             user = User.find_by(id: user_id)
       
             if user
-              new_access_token = encode_token({ user_id: user.id, exp: 12.hours.from_now.to_i }) #Here it is generating the new access token
+              new_access_token = encode_token({ user_id: user.id, exp: 24.hours.from_now.to_i }) #Here it is generating the new access token
               render json: { access_token: new_access_token }, status: :ok
             else
               render json: { error: 'User not found' }, status: :unauthorized # Return error if user not found
