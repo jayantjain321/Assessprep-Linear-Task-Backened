@@ -29,4 +29,8 @@ class Project < ApplicationRecord
   def destroy
     mark_as_deleted
   end
+
+  def restore
+    update(deleted_at: nil)
+  end
 end
