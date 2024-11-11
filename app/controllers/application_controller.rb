@@ -21,9 +21,6 @@ class ApplicationController < ActionController::API
     rescue ActiveRecord::RecordNotFound
       # Handle missing user record for the decoded user ID
       render json: { error: 'User not found. Please login again.' }, status: :unauthorized
-    rescue StandardError => e
-      # Catch any other errors and respond with an error message
-      render json: { error: e.message }, status: :unauthorized
     end
   end      
 

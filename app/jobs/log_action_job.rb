@@ -13,7 +13,11 @@ class LogActionJob < ApplicationJob
     model = model_type.constantize  # Convert the model type from string to constant (e.g., 'Task' -> Task model).
     # Check if the model has a 'deleted_at' column (indicating soft delete support).
     # If it does, find the record including soft-deleted ones.
-    return model.unscope(where: :deleted_at).find_by(id: record_id) if model.column_names.include?('deleted_at')
-    model.find_by(id: record_id) # If the model does not support soft deletion, find the record normally.
+    if model.column_names.include?('deleted_at')
+      record = model.unscope(where: :deleted_at).find_by(id: record_id)
+    else
+      record = model.find_by(id: record_id)
+    end
+    return record
   end  
 end
