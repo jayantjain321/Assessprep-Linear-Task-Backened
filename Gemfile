@@ -67,7 +67,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem 'rspec-rails', '~> 6.0'
-  gem 'shoulda-matchers', '~> 5.0'
+  gem 'shoulda-matchers', '~> 6.4'
   gem 'factory_bot_rails'
   
 end
